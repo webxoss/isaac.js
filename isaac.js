@@ -46,7 +46,7 @@
 
 
 /* js string (ucs-2/utf16) to a 32-bit integer (utf-8 chars, little-endian) array */
-String.prototype.toIntArray = function() {
+var toIntArray = function() {
   var w1, w2, u, r4 = [], r = [], i = 0;
   var s = this + '\0\0\0'; // pad string to avoid discarding last chars
   var l = s.length - 1;
@@ -126,7 +126,7 @@ var isaac = (function(){
     e = f = g = h = 0x9e3779b9; /* the golden ratio */
 
     if(s && typeof(s) === 'string')
-      s = s.toIntArray();
+      s = toIntArray(s);
 
     if(s && typeof(s) === 'number') {
       s = [s];
