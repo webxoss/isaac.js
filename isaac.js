@@ -44,6 +44,11 @@
  *
  */
 
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define(['exports'], factory) :
+  (global = global || self, factory(global.Isaac = {}));
+}(this, function (exports) { 'use strict';
 
 /* js string (ucs-2/utf16) to a 32-bit integer (utf-8 chars, little-endian) array */
 var toIntArray = function() {
@@ -89,8 +94,8 @@ var toIntArray = function() {
   return r;
 }
 
-/* isaac module pattern */
-var isaac = (function(){
+/* isaac factory pattern */
+function Isaac(initialSeed) {
 
   /* private: internal states */
   var m = Array(256), // internal memory
@@ -100,7 +105,7 @@ var isaac = (function(){
       r = Array(256), // result array
       gnt = 0;        // generation counter
 
-  seed(Math.random() * 0xffffffff);
+  seed(initialSeed || Math.random() * 0xffffffff);
 
   /* private: 32-bit integer safe adder */
   function add(x, y) {
@@ -216,6 +221,11 @@ var isaac = (function(){
     return r[gnt];
   }
 
+  /* public: output */
+  isaac.random = function() {
+    return 0.5 + rand() * 2.3283064365386963e-10; // 2^-32
+  }
+
   /* public: return internals in an object*/
   function internals(){
     return {a: acc, b: brs, c: cnt, m: m, r: r};
@@ -227,11 +237,11 @@ var isaac = (function(){
     'seed':  seed,
     'prng':  prng,
     'rand':  rand,
+    'random': random,
     'internals': internals
   };
-})(); /* declare and execute */
-
-/* public: output*/
-isaac.random = function() {
-  return 0.5 + this.rand() * 2.3283064365386963e-10; // 2^-32
 }
+
+  exports.Isaac = Isaac;
+  Object.defineProperty(exports, '__esModule', { value: true });
+}));
